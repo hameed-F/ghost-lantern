@@ -1,4 +1,5 @@
 # Ghost Lantern
+https://github.com/hameed-F/ghost-lantern
 
 First-person 3D escape-room game (Three.js) with email-OTP login, player stats dashboard and leaderboard.
 
