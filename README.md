@@ -1,3 +1,12 @@
+---
+title: Ghost Lantern
+emoji: 👻
+colorFrom: purple
+colorTo: green
+sdk: docker
+app_port: 7860
+pinned: false
+---
 # Ghost Lantern
 https://github.com/hameed-F/ghost-lantern
 
