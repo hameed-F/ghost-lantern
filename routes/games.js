@@ -32,9 +32,13 @@ router.get('/me', requireAuth, h(async (req, res) => {
 }));
 
 router.get('/leaderboard', h(async (req, res) => {
-  const rows = (await pool.query(`SELECT u.username, max(g.score)::int AS best, count(*)::int AS games,
-    (count(*) FILTER (WHERE g.won))::int AS escapes
-    FROM games g JOIN users u ON u.id=g.user_id GROUP BY u.username ORDER BY best DESC LIMIT 10`)).rows;
+  // every verified player is listed (even with no runs, or only early deaths); best score ranks them, top 10 shown
+  const rows = (await pool.query(`SELECT u.username, coalesce(max(g.score),0)::int AS best, count(g.id)::int AS games,
+    (count(g.id) FILTER (WHERE g.won))::int AS escapes
+    FROM users u LEFT JOIN games g ON g.user_id=u.id
+    WHERE u.is_verified=true
+    GROUP BY u.id, u.username
+    ORDER BY best DESC, escapes DESC, u.created_at ASC LIMIT 10`)).rows;
   res.json({ rows });
 }));
 

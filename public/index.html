@@ -194,14 +194,44 @@ function toast(s){const t=$('toast');t.textContent=s;t.style.opacity=1;toastT=2.
 function hud(){$('dm').textContent=dia+'/'+M.N;$('ky').textContent=hasKey?'found':'missing';$('sc').textContent=score;}
 function hurtP(n){hp-=n;SFX.hurt();const f=$('flash');f.style.transition='none';f.style.opacity=.5;requestAnimationFrame(()=>{f.style.transition='opacity .4s';f.style.opacity=0;});shake=Math.max(shake,.25);if(hp<=0)finish(false);}
 function openDoor(){doorOpen=true;lv.remove(doorMesh);SFX.door();
- const g=new THREE.Group(),col=lvl?0xffd27a:0x38e8ff;
- g.add(new THREE.Mesh(new THREE.TorusGeometry(1.6,.1,6,6),new THREE.MeshBasicMaterial({color:col})));
- const u={t:{value:0},c:{value:new THREE.Color(col)}},disc=new THREE.Mesh(new THREE.CircleGeometry(1.45,48),new THREE.ShaderMaterial({uniforms:u,transparent:true,side:THREE.DoubleSide,depthWrite:false,blending:THREE.AdditiveBlending,vertexShader:`varying vec2 v;void main(){v=uv-.5;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,fragmentShader:`uniform float t;uniform vec3 c;varying vec2 v;void main(){float r=length(v)*2.;float a=atan(v.y,v.x);float s=sin(a*5.+r*9.-t*4.)*.5+.5;float q=sin(a*3.-r*14.+t*3.)*.5+.5;float e=smoothstep(1.,.8,r);vec3 k=mix(c*.3,c,s*q)+smoothstep(.45,0.,r)*vec3(1.);gl_FragColor=vec4(k,e*(.5+.5*s));}`}));g.add(disc);
- const ring2=new THREE.Mesh(new THREE.TorusGeometry(1.15,.04,6,6),new THREE.MeshBasicMaterial({color:0xffffff}));g.add(ring2);
- const pa=[];for(let i=0;i<70;i++){const an=Math.random()*6.283,rr=1.9+Math.random()*.5;pa.push(Math.cos(an)*rr,Math.sin(an)*rr,(Math.random()-.5)*.8);}
- const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.Float32BufferAttribute(pa,3));const pts=new THREE.Points(pg,new THREE.PointsMaterial({color:col,size:.09,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));g.add(pts);
- g.add(new THREE.PointLight(col,3,16));g.position.set(doorC*CELL+2,1.7,doorR*CELL+2);g.rotation.y=Math.PI/2;lv.add(g);portal=g;
- g.userData.tick=d=>{g.children[0].rotation.z+=d*1.4;ring2.rotation.z-=d*2.4;u.t.value+=d;pts.rotation.z+=d*.9;};
+ const c1=lvl?0xffb84a:0x2fe6ff,c2=lvl?0x5ff0e0:0xb04cff,g=new THREE.Group(),add=o=>{g.add(o);return o;};
+ const bas=(c,o)=>new THREE.MeshBasicMaterial(Object.assign({color:c,transparent:true},o||{}));
+ const glowM={side:THREE.DoubleSide,blending:THREE.AdditiveBlending,depthWrite:false};
+ // armoured octagonal gate, glowing inner edge, chasing LEDs
+ const frame=add(new THREE.Mesh(new THREE.TorusGeometry(1.5,.13,6,8),new THREE.MeshStandardMaterial({color:0x1a1f2e,metalness:.9,roughness:.35,emissive:0x0a1020})));frame.rotation.z=Math.PI/8;
+ const edge=add(new THREE.Mesh(new THREE.TorusGeometry(1.36,.035,6,8),bas(c1)));edge.rotation.z=Math.PI/8;
+ const leds=[];for(let i=0;i<8;i++){const an=Math.PI/8+i*Math.PI/4,l=add(new THREE.Mesh(new THREE.BoxGeometry(.17,.17,.17),bas(i%2?c2:c1)));l.position.set(Math.cos(an)*1.5,Math.sin(an)*1.5,.02);leds.push(l);}
+ // two counter-rotating segmented rings
+ const ringA=add(new THREE.Group()),ringB=add(new THREE.Group());
+ for(let i=0;i<3;i++)ringA.add(new THREE.Mesh(new THREE.RingGeometry(1.18,1.27,32,1,i*2.09,1.4),bas(c1,glowM)));
+ for(let i=0;i<4;i++)ringB.add(new THREE.Mesh(new THREE.RingGeometry(1.0,1.05,32,1,i*1.57+.2,.9),bas(c2,glowM)));
+ // event horizon: spiral vortex, pulsing rings, scan lines, bright core
+ const u={t:{value:0},c1:{value:new THREE.Color(c1)},c2:{value:new THREE.Color(c2)}};
+ add(new THREE.Mesh(new THREE.CircleGeometry(1.3,64),new THREE.ShaderMaterial({uniforms:u,transparent:true,side:THREE.DoubleSide,depthWrite:false,blending:THREE.AdditiveBlending,
+  vertexShader:`varying vec2 v;void main(){v=uv-.5;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+  fragmentShader:`uniform float t;uniform vec3 c1;uniform vec3 c2;varying vec2 v;void main(){vec2 p=v*2.;float r=length(p);float a=atan(p.y,p.x);float arms=smoothstep(.15,.95,sin((a+r*6.-t*2.2)*3.)*.5+.5);float rings=smoothstep(.8,1.,sin(r*22.-t*7.)*.5+.5)*.55;float scan=sin(p.y*70.+t*9.)*.07;float core=exp(-r*3.4);float edge=smoothstep(1.,.86,r);vec3 col=mix(c1,c2,arms)*(.4+.6*arms)+rings*c1+core*vec3(1.3)+scan;float al=edge*(.3+.7*clamp(arms+core,0.,1.))+rings*.4*edge;gl_FragColor=vec4(col,clamp(al,0.,1.));}`})));
+ // soft glow halo behind the gate
+ const cv=document.createElement('canvas');cv.width=cv.height=128;const cx=cv.getContext('2d'),gr=cx.createRadialGradient(64,64,0,64,64,64);gr.addColorStop(0,'rgba(255,255,255,.9)');gr.addColorStop(.4,'rgba(150,230,255,.35)');gr.addColorStop(1,'rgba(0,0,0,0)');cx.fillStyle=gr;cx.fillRect(0,0,128,128);
+ const glow=add(new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),color:c1,blending:THREE.AdditiveBlending,transparent:true,depthWrite:false})));glow.scale.set(4.6,4.6,1);glow.position.z=-.08;
+ // energy particles spiralling into the vortex
+ const N=150,pa=new Float32Array(N*3),pc=new Float32Array(N*3),an=[],rd=[],sp=[],C=new THREE.Color();
+ for(let i=0;i<N;i++){an.push(Math.random()*6.283);rd.push(.2+Math.random()*1.6);sp.push(.25+Math.random()*.6);C.setHex(i%2?c2:c1);pc.set([C.r,C.g,C.b],i*3);}
+ const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(pa,3));pg.setAttribute('color',new THREE.BufferAttribute(pc,3));
+ add(new THREE.Points(pg,new THREE.PointsMaterial({size:.075,vertexColors:true,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false})));
+ // glowing hex pads on the floor in front of the gate
+ const pad1=add(new THREE.Mesh(new THREE.RingGeometry(.95,1.03,6),bas(c1,glowM))),pad2=add(new THREE.Mesh(new THREE.RingGeometry(1.5,1.55,6),bas(c2,glowM)));
+ [pad1,pad2].forEach(p=>{p.rotation.x=-Math.PI/2;p.position.set(0,-1.68,-1.3);});
+ const l1=new THREE.PointLight(c1,4,18),l2=new THREE.PointLight(c2,2.5,12);l1.position.z=-1;l2.position.z=-.4;g.add(l1,l2);
+ g.position.set(doorC*CELL+2,1.7,doorR*CELL+2);g.rotation.y=Math.PI/2;lv.add(g);portal=g;
+ let tm=0;
+ g.userData.tick=d=>{tm+=d;u.t.value=tm;ringA.rotation.z+=d*1.1;ringB.rotation.z-=d*1.7;
+  leds.forEach((l,i)=>l.scale.setScalar(.6+.8*Math.max(0,Math.sin(tm*5-i*.8))));
+  glow.scale.setScalar(4.4+Math.sin(tm*2.2)*.5);l1.intensity=3.6+Math.sin(tm*6)*.8+Math.random()*.4;l2.intensity=2.4+Math.sin(tm*4+1)*.6;
+  pad1.scale.setScalar(1+.08*Math.sin(tm*3));pad2.rotation.z+=d*.4;
+  for(let i=0;i<N;i++){rd[i]-=sp[i]*d;if(rd[i]<.12){rd[i]=1.5+Math.random()*.6;an[i]=Math.random()*6.283;}an[i]+=d*(1.2+1.6/(rd[i]+.3));
+   pa[i*3]=Math.cos(an[i])*rd[i];pa[i*3+1]=Math.sin(an[i])*rd[i];pa[i*3+2]=Math.sin(tm*3+i)*.08;}
+  pg.attributes.position.needsUpdate=true;};
+ if(ac){const hg=ac.createGain();hg.gain.value=.05;const hf=ac.createBiquadFilter();hf.type='lowpass';hf.frequency.value=500;hg.connect(hf);hf.connect(master);[110,110.7,220].forEach(fr=>{const o=ac.createOscillator();o.type='sawtooth';o.frequency.value=fr;o.connect(hg);o.start();dr.push(o);});}
  setTimeout(()=>SFX.portal(),700);toast('The back door opens and a portal appears!');}
 function finish(win){st='over';try{document.exitPointerLock()}catch(_){}
  const secs=(performance.now()-t0)/1000|0,bonus=win?Math.max(0,600-secs)*2:0;score+=bonus;
