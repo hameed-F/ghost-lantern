@@ -1,0 +1,23 @@
+:root{--bg:#07030f;--ink:#e9ffe9;--mint:#7cffb2;--pink:#ff4fd8;--dim:#a79cc4;--glass:rgba(30,14,52,.6);color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% -10%,#2d1052,#07030f 62%) fixed;color:var(--ink);font-family:'Fredoka',system-ui,sans-serif}
+.wrap{max-width:960px;margin:0 auto;padding:24px 16px 48px}
+.narrow{max-width:440px;min-height:100vh;display:flex;align-items:center}
+.card{width:100%;background:var(--glass);border:1px solid rgba(255,79,216,.35);border-radius:22px;padding:24px;backdrop-filter:blur(12px);box-shadow:0 0 40px rgba(255,79,216,.15);margin-bottom:18px}
+h1{font-family:'Creepster','Impact',cursive;font-weight:400;font-size:clamp(2.2rem,8vw,3.2rem);margin:0 0 6px;color:var(--mint);text-shadow:0 0 18px var(--mint);letter-spacing:.04em}
+h2{margin:0 0 12px;font-size:1.2rem;font-weight:600}
+p{color:var(--dim);line-height:1.45}
+label{display:block;margin:12px 0 4px;font-size:.9rem;color:var(--dim)}
+input{width:100%;font:inherit;color:var(--ink);background:rgba(0,0,0,.35);border:1px solid rgba(124,255,178,.35);border-radius:12px;padding:11px 14px}
+input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(--pink);outline-offset:2px}
+button,.btn{display:inline-block;font:inherit;font-weight:600;color:#10031c;background:var(--mint);border:0;border-radius:12px;padding:11px 24px;margin-top:16px;cursor:pointer;text-decoration:none;box-shadow:0 0 18px rgba(124,255,178,.45)}
+button.ghost{background:transparent;color:var(--mint);border:1px solid var(--mint);box-shadow:none}
+.tabs{display:flex;gap:8px;margin:14px 0 4px}.tabs button{margin:0;flex:1;background:transparent;color:var(--dim);border:1px solid rgba(255,255,255,.2);box-shadow:none}
+.tabs button.on{color:#10031c;background:var(--mint)}
+.msg{min-height:1.4em;margin-top:12px;font-size:.95rem}.bad{color:#ff8097}.good{color:var(--mint)}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:18px}
+.stat{background:var(--glass);border:1px solid rgba(124,255,178,.3);border-radius:16px;padding:14px}
+.stat b{display:block;font-size:1.9rem;color:var(--mint)}.stat span{color:var(--dim);font-size:.85rem}
+.scroll{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:420px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.1)}th{color:var(--dim);font-weight:400}

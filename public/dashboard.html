@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ghost Lantern: Dashboard</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Creepster&family=Fredoka:wght@400;600&display=swap">
+<link rel="stylesheet" href="/style.css"></head>
+<body><main class="wrap">
+<div class="bar"><div><h1>Ghost Lantern</h1><p id="hello">Loading...</p></div>
+ <div><a class="btn" href="/game.html">Play now</a> <button class="ghost" id="logout" type="button">Log out</button></div></div>
+<section class="stats" id="stats" aria-label="Your stats"></section>
+<div class="card"><h2>Your last 10 runs</h2><div class="scroll"><table><thead><tr><th>When</th><th>Score</th><th>Diamonds</th><th>Ghosts</th><th>Result</th><th>Time</th></tr></thead><tbody id="recent"></tbody></table></div></div>
+<div class="card"><h2>Top 10 players</h2><div class="scroll"><table><thead><tr><th>#</th><th>Player</th><th>Best score</th><th>Runs</th><th>Escapes</th></tr></thead><tbody id="board"></tbody></table></div></div>
+</main><script src="/dashboard.js"></script></body></html>

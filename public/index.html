@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ghost Lantern: Sign in</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Creepster&family=Fredoka:wght@400;600&display=swap">
+<link rel="stylesheet" href="/style.css"></head>
+<body><main class="wrap narrow"><div class="card">
+<h1>Ghost Lantern</h1><p>Sign in to escape the house and save your scores.</p>
+<div class="tabs"><button type="button" data-tab="login" class="on">Log in</button><button type="button" data-tab="signup">Sign up</button></div>
+
+<form id="login" novalidate>
+ <label for="li-email">Email</label><input id="li-email" type="email" autocomplete="email" maxlength="100" required>
+ <label for="li-pass">Password</label><input id="li-pass" type="password" autocomplete="current-password" maxlength="72" required>
+ <button type="submit">Log in</button></form>
+
+<form id="signup" hidden novalidate>
+ <label for="su-user">Username (3 to 16 letters, numbers, underscore)</label><input id="su-user" autocomplete="username" maxlength="16" pattern="[A-Za-z0-9_]{3,16}" required>
+ <label for="su-email">Email</label><input id="su-email" type="email" autocomplete="email" maxlength="100" required>
+ <label for="su-pass">Password (8+ characters, a letter and a number)</label><input id="su-pass" type="password" autocomplete="new-password" minlength="8" maxlength="72" required>
+ <button type="submit">Create account</button></form>
+
+<form id="verify" hidden novalidate>
+ <p id="vtext">Enter the 6-digit code we emailed you.</p>
+ <label for="otp">Code</label><input id="otp" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required>
+ <button type="submit">Verify</button> <button type="button" class="ghost" id="resend">Send a new code</button></form>
+<div id="msg" class="msg" role="status" aria-live="polite"></div>
+</div></main><script src="/auth.js"></script></body></html>
