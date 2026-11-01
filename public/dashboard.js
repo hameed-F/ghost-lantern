@@ -1,7 +1,7 @@
 const $ = s => document.querySelector(s);
 // Everything below uses textContent, so database values can never be interpreted as HTML.
 function row(tbody, cells) { const tr = document.createElement('tr'); cells.forEach(c => { const td = document.createElement('td'); td.textContent = c; tr.appendChild(td); }); tbody.appendChild(tr); }
-async function api(u) { const r = await fetch(u, { credentials: 'same-origin' }); if (r.status === 401) { location.href = '/'; throw new Error('auth'); } return r.json(); }
+async function api(u) { const r = await fetch(u, { credentials: 'same-origin' }); if (r.status === 401) { location.href = '/login.html'; throw new Error('auth'); } return r.json(); }
 (async () => {
   const me = await api('/api/auth/me');
   $('#hello').textContent = 'Welcome back, ' + me.username.replace(/&#(\d+);/g, (_, n) => String.fromCharCode(n));

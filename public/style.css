@@ -21,3 +21,5 @@ button.ghost{background:transparent;color:var(--mint);border:1px solid var(--min
 .stat b{display:block;font-size:1.9rem;color:var(--mint)}.stat span{color:var(--dim);font-size:.85rem}
 .scroll{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:420px}
 th,td{text-align:left;padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.1)}th{color:var(--dim);font-weight:400}
+a{color:var(--mint)}
+.linkbtn{background:none;border:0;box-shadow:none;color:var(--mint);text-decoration:underline;padding:0;margin:14px 0 0;font-weight:400;font-size:.95rem;cursor:pointer}

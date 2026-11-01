@@ -14,19 +14,24 @@ function parseFrom(s) {
   return m ? { name: m[1].trim() || 'Ghost Lantern', email: m[2].trim() } : { name: 'Ghost Lantern', email: (s || '').trim() };
 }
 
-async function sendOtp(to, name, otp) {
-  const text = `Hi ${name},\n\nYour verification code is ${otp}. It expires in 10 minutes.\n\nIf you did not sign up, you can ignore this email.`;
-  if (apiKey) {   // HTTPS (port 443): works on Render's free tier
+// purpose: 'verify' (default) or 'reset'
+async function sendOtp(to, name, otp, purpose) {
+  const reset = purpose === 'reset';
+  const subject = reset ? 'Reset your Ghost Lantern password' : 'Your Ghost Lantern code';
+  const text = reset
+    ? `Hi ${name},\n\nYour password reset code is ${otp}. It expires in 10 minutes.\n\nIf you did not ask for this, ignore this email. Your password has not changed.`
+    : `Hi ${name},\n\nYour verification code is ${otp}. It expires in 10 minutes.\n\nIf you did not sign up, you can ignore this email.`;
+  if (apiKey) {   // HTTPS (port 443): works on free hosts that block SMTP
     const r = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: { 'api-key': apiKey, 'content-type': 'application/json', accept: 'application/json' },
-      body: JSON.stringify({ sender: parseFrom(process.env.MAIL_FROM), to: [{ email: to }], subject: 'Your Ghost Lantern code', textContent: text })
+      body: JSON.stringify({ sender: parseFrom(process.env.MAIL_FROM), to: [{ email: to }], subject, textContent: text })
     });
     if (!r.ok) throw new Error('Brevo API error ' + r.status + ' ' + await r.text());
     return;
   }
-  if (tx) { await tx.sendMail({ from: process.env.MAIL_FROM || process.env.SMTP_USER, to, subject: 'Your Ghost Lantern code', text }); return; }
+  if (tx) { await tx.sendMail({ from: process.env.MAIL_FROM || process.env.SMTP_USER, to, subject, text }); return; }
   if (process.env.NODE_ENV === 'production') throw new Error('No email provider configured');
-  console.log(`[DEV ONLY] OTP for ${to}: ${otp}`);
+  console.log(`[DEV ONLY] ${reset ? 'RESET' : 'OTP'} code for ${to}: ${otp}`);
 }
 module.exports = { sendOtp };

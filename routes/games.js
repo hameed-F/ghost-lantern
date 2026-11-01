@@ -31,7 +31,7 @@ router.get('/me', requireAuth, h(async (req, res) => {
   res.json({ stats: s, recent });
 }));
 
-router.get('/leaderboard', requireAuth, h(async (req, res) => {
+router.get('/leaderboard', h(async (req, res) => {
   const rows = (await pool.query(`SELECT u.username, max(g.score)::int AS best, count(*)::int AS games,
     (count(*) FILTER (WHERE g.won))::int AS escapes
     FROM games g JOIN users u ON u.id=g.user_id GROUP BY u.username ORDER BY best DESC LIMIT 10`)).rows;
