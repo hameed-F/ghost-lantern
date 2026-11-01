@@ -1,7 +1,7 @@
 require('dotenv').config();
-const { Pool, neonConfig } = require('@neondatabase/serverless');
-neonConfig.webSocketConstructor = require('ws');   // talks to Neon over port 443 instead of 5432
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const { Pool } = require('pg');
+const local = /localhost|127\.0\.0\.1/.test(process.env.DATABASE_URL || '');
+const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: local ? false : { rejectUnauthorized: false }, max: 3, idleTimeoutMillis: 10000 });
 
 async function init() {
   await pool.query(`
